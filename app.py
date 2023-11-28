@@ -26,3 +26,14 @@ def register():
 
 
 # query parameter task
+
+
+@app.route("/user")
+def query_example():
+    name = request.args.get("name")
+    age = request.args.get("age")
+
+    response = f"Hello {name}!"
+    if age is not None:
+        response = response + f" You are  {age} years old!"
+    return response
