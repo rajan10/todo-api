@@ -2,10 +2,8 @@ from model import Task
 
 
 class TaskRepo:
-    def create(self, title: str, description: str, due_date: str, status: bool) -> Task:
-        task = Task(
-            title=title, description=description, due_date=due_date, status=status
-        )
+    def create(self, title: str, description: str, due_date: str) -> Task:
+        task = Task(title=title, description=description, due_date=due_date)
         task.save()
         return task
 
