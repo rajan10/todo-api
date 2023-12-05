@@ -35,8 +35,7 @@ def create():
 def read(title: str):
     task_repo = TaskRepo()
     task = task_repo.read_by_title(title=title)
-    if task:
-        return jsonify(task)
+    return jsonify(task)
 
 
 @app.route("/task-update/<title>", methods=["PUT"])  # title is called as path parameter
