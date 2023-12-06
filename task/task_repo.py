@@ -1,4 +1,4 @@
-from model import Task
+from task.model import Task
 
 
 class TaskRepo:
