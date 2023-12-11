@@ -1,28 +1,43 @@
 from flask import Blueprint, request, jsonify
 
 from task.task_repo import TaskRepo
-
+from pydantic import ValidationError
+from task.schemas import TaskSchema, TaskReadSchema
 
 task_blueprint = Blueprint("task_blueprint", __name__)
 
 
+# decorator associating the def create() with /task-create path parameter
 @task_blueprint.route("/task-create", methods=["POST"])
 def create():
-    data = request.json
-    title = data["title"]
-    description = data["description"]
-    due_date = data["due_date"]
+    try:
+        data = request.json
+        task_schema = TaskSchema(**data)
+        title = task_schema.title
+        description = task_schema.description
+        due_date = task_schema.due_date
 
-    task_repo = TaskRepo()
-    task_repo.create(title=title, description=description, due_date=due_date)
-    return jsonify({"message": f"Task {title} created successfully!"})
+        task_repo = TaskRepo()
+        task_repo.create(title=title, description=description, due_date=due_date)
+        return jsonify({"message": f"Task {title} created successfully!"})
+    except ValidationError as exc:
+        return jsonify({"message": exc.errors()})
+    except Exception as exc:
+        return jsonify({"message": str(exc)})
 
 
 @task_blueprint.route("/task-read/<title>", methods=["GET"])
 def read(title: str):
-    task_repo = TaskRepo()
-    task = task_repo.read_by_title(title=title)
-    return jsonify(task)
+    try:
+        task_read_schema = TaskReadSchema(title=title)
+        task_repo = TaskRepo()
+        task = task_repo.read_by_title(title=task_read_schema.title)
+        return jsonify(task)
+    except ValidationError as exc:
+        return jsonify({"message": exc.errors()})
+
+    except Exception as exc:
+        return jsonify({"message": str(exc)})
 
 
 @task_blueprint.route("/task-update/<title>", methods=["PUT"])

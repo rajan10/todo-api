@@ -4,7 +4,7 @@ from task.urls import task_blueprint
 from database import db
 
 
-app = Flask(__name__)
+app = Flask(__name__)  # object creation
 app.register_blueprint(user_blueprint)
 app.register_blueprint(task_blueprint)
 

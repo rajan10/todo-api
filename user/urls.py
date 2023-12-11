@@ -1,18 +1,27 @@
 from flask import Blueprint, request, jsonify
 from user.user_repo import UserRepo
+from user.schemas import UserSchema
+from pydantic import ValidationError
 
 user_blueprint = Blueprint("user_blueprint", __name__)
 
 
 @user_blueprint.route("/user-create", methods=["POST"])
 def create_user():
-    data = request.json
-    username = data["username"]
-    password = data["password"]
+    try:
+        data = request.json
+        # validation and unpackaging of data dict
+        user_schema = UserSchema(**data)
+        username = user_schema.username
+        password = user_schema.password
 
-    user_repo = UserRepo()
-    user = user_repo.create(username=username, password=password)
-    return jsonify(user)
+        user_repo = UserRepo()
+        user = user_repo.create(username=username, password=password)
+        return jsonify(user)
+    except ValidationError as exc:
+        return jsonify({"message": exc.errors()})
+    except Exception as exc:
+        return jsonify({"message": str(exc)})
 
 
 @user_blueprint.route("/user-read/<username>", methods=["GET"])
