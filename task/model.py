@@ -10,4 +10,4 @@ class Task(Document):
     is_completed = BooleanField(default=False)
 
     def __str__(self):
-        return f"<Task> {self.name}"
+        return f"<Task> {self.title}"
