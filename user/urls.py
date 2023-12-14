@@ -64,7 +64,7 @@ def update_user(username: str):
         user = user_repo.update_by_username(
             username=user_update_schema.username, password=password
         )
-        user_schema=UserSchema()
+        user_schema=UserSchema(username=userna)
         return jsonify(user)
     except ValidationError as exc:
         return jsonify({"message": exc.errors()})

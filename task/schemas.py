@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 
+from fields import PyObjectId
+
 
 class TaskBaseSchema(BaseModel):
     description: str = Field(
@@ -34,6 +36,6 @@ class TaskUpdateSchema(TaskBaseSchema):
 
 
 class TaskSchema(TaskBaseSchema):
-    id: str = Field(..., description="Id for Task")
+    id: PyObjectId = Field(..., description="Id for Task")
     title: str = Field(..., min_length=3, description="title for the task")
     created_at: datetime = Field(..., description="created task date")

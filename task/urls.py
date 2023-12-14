@@ -19,8 +19,17 @@ def create():
         due_date = task_create_schema.due_date
 
         task_repo = TaskRepo()
-        task_repo.create(title=title, description=description, due_date=due_date)
-        return jsonify({"message": f"Task {title} created successfully!"})
+        task = task_repo.create(title=title, description=description, due_date=due_date)
+        task_schema = TaskSchema(
+            id=task.id,
+            title=task.title,
+            description=task.description,
+            created_at=task.created_at,
+            due_date=task.due_date,
+            is_completed=task.is_completed,
+        )
+
+        return jsonify(task_schema.model_dump())
     except ValidationError as exc:
         return jsonify({"message": exc.errors()})
     except Exception as exc:
@@ -68,7 +77,15 @@ def update(title: str):
             due_date=due_date,
             is_completed=is_completed,
         )
-        return jsonify(task)
+        task_schema = TaskSchema(
+            id=task.id,
+            title=task.title,
+            description=task.description,
+            created_at=task.created_at,
+            due_date=task.due_date,
+            is_completed=task.is_completed,
+        )
+        return jsonify(task_schema.model_dump())
     except ValidationError as exc:
         return jsonify({"message": exc.errors()})
     except Exception as exc:
