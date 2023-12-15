@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, make_response
 from user.user_repo import UserRepo
 from user.schemas import UserBaseSchema, UserNameSchema, UserDeleteSchema, UserSchema
 from pydantic import ValidationError
+from auth.utils import encrypt_string
 
 
 user_blueprint = Blueprint("user_blueprint", __name__)
@@ -15,9 +16,9 @@ def create_user():
         user_create_schema = UserBaseSchema(**data)
         username = user_create_schema.username
         password = user_create_schema.password
-
+        encrypted_password = encrypt_string(string=password)
         user_repo = UserRepo()
-        user = user_repo.create(username=username, password=password)
+        user = user_repo.create(username=username, password=encrypted_password)
         user_schema = UserSchema(
             id=user.id, username=user.username, password=user.password
         )
@@ -81,7 +82,10 @@ def delete_user(username: str):
         username_delete_schema = UserDeleteSchema(username=username)
         user_repo = UserRepo()
         user_repo.delete_by_username(username=username_delete_schema.username)
-        return jsonify({"message": f"Successfully deleted!{username}"})
+        response = make_response(
+            jsonify({"message": f"Successfully deleted!{username}"}), 204
+        )
+        return response
     except ValidationError as exc:
         return make_response(jsonify({"message": exc.errors()}), 400)
     except Exception as exc:

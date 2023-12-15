@@ -84,7 +84,7 @@ def update(title: str):
             due_date=task.due_date,
             is_completed=task.is_completed,
         )
-        response = make_response(jsonify(task_schema.model_dump()), 201)
+        response = make_response(jsonify(task_schema.model_dump()), 200)
         return response
     except ValidationError as exc:
         return make_response(jsonify({"message": exc.errors()}), 400)
@@ -98,7 +98,12 @@ def delete(title: str):
         task_delete_schema = TaskTitleSchema(title=title)
         task_repo = TaskRepo()
         task_repo.delete(title=task_delete_schema.title)
-        return jsonify({"message": f"Task {title} deleted successfully!"})
+
+        response = make_response(
+            jsonify({"message": f"Successfully deleted!{title}"}), 204
+        )
+        return response
+
     except ValidationError as exc:
         return make_response(jsonify({"message": exc.errors()}), 400)
     except Exception as exc:
