@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 
 from task.task_repo import TaskRepo
 from pydantic import ValidationError
@@ -28,12 +28,12 @@ def create():
             due_date=task.due_date,
             is_completed=task.is_completed,
         )
-
-        return jsonify(task_schema.model_dump())
+        response = make_response(jsonify(task_schema.model_dump()), 201)
+        return response
     except ValidationError as exc:
-        return jsonify({"message": exc.errors()})
+        return make_response(jsonify({"message": exc.errors()}), 400)
     except Exception as exc:
-        return jsonify({"message": str(exc)})
+        return make_response(jsonify({"message": str(exc)}), 500)
 
 
 @task_blueprint.route("/task-read/<title>", methods=["GET"])
@@ -51,13 +51,12 @@ def read(title: str):
             due_date=task.due_date,
             is_completed=task.is_completed,
         )
-        #  task_schema = TaskSchema(**task_dict)
-        return jsonify(task_schema.model_dump())
+        response = make_response(jsonify(task_schema.model_dump()), 201)
+        return response
     except ValidationError as exc:
-        return jsonify({"message": exc.errors()})
-
+        return make_response(jsonify({"message": exc.errors()}), 400)
     except Exception as exc:
-        return jsonify({"message": str(exc)})
+        return make_response(jsonify({"message": str(exc)}), 500)
 
 
 @task_blueprint.route("/task-update/<title>", methods=["PUT"])
@@ -85,11 +84,12 @@ def update(title: str):
             due_date=task.due_date,
             is_completed=task.is_completed,
         )
-        return jsonify(task_schema.model_dump())
+        response = make_response(jsonify(task_schema.model_dump()), 201)
+        return response
     except ValidationError as exc:
-        return jsonify({"message": exc.errors()})
+        return make_response(jsonify({"message": exc.errors()}), 400)
     except Exception as exc:
-        return jsonify({"message": str(exc)})
+        return make_response(jsonify({"message": str(exc)}), 500)
 
 
 @task_blueprint.route("/task-delete/<title>", methods=["DELETE"])
@@ -100,6 +100,6 @@ def delete(title: str):
         task_repo.delete(title=task_delete_schema.title)
         return jsonify({"message": f"Task {title} deleted successfully!"})
     except ValidationError as exc:
-        return jsonify({"message": exc.errors()})
+        return make_response(jsonify({"message": exc.errors()}), 400)
     except Exception as exc:
-        return jsonify({"message": str(exc)})
+        return make_response(jsonify({"message": str(exc)}), 500)

@@ -64,12 +64,15 @@ def update_user(username: str):
         user = user_repo.update_by_username(
             username=user_update_schema.username, password=password
         )
-        user_schema=UserSchema(username=userna)
-        return jsonify(user)
+        user_schema = UserSchema(
+            id=user.id, username=user.username, password=user.password
+        )
+        response = make_response(jsonify(user_schema.model_dump()), 201)
+        return response
     except ValidationError as exc:
-        return jsonify({"message": exc.errors()})
+        return make_response(jsonify({"message": exc.errors()}), 400)
     except Exception as exc:
-        return jsonify({"message": str(exc)})
+        return make_response(jsonify({"message": str(exc)}), 500)
 
 
 @user_blueprint.route("/user-delete/<username>", methods=["DELETE"])
@@ -80,6 +83,6 @@ def delete_user(username: str):
         user_repo.delete_by_username(username=username_delete_schema.username)
         return jsonify({"message": f"Successfully deleted!{username}"})
     except ValidationError as exc:
-        return jsonify({"message": exc.errors()})
+        return make_response(jsonify({"message": exc.errors()}), 400)
     except Exception as exc:
-        return jsonify({"message": str(exc)})
+        return make_response(jsonify({"message": str(exc)}), 500)

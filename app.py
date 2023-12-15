@@ -1,7 +1,8 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, Response
 from user.urls import user_blueprint
 from task.urls import task_blueprint
 from database import db
+import json
 
 
 app = Flask(__name__)  # object creation
@@ -21,4 +22,12 @@ db.init_app(app)
 
 @app.route("/")
 def health_status():
-    return jsonify({"message": "Server is running"})
+    response = Response(
+        response=json.dumps({"message": "Server is running"}), status=200
+    )
+    return response
+
+
+
+
+    
