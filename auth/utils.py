@@ -17,8 +17,9 @@ def encrypt_string(string: str):
 # db_password_bytes = db_password.encode("utf-8")
 
 
-def compare_password(user_password: bytes, db_password_bytes: bytes) -> bool:
-    user_password_bytes = user_password.encode("utf-8")
+def compare_password(user_password: str, db_password: str) -> bool:
+    user_password_bytes = user_password.encode("utf-8")  # converting both into bytes
+    db_password_bytes = db_password.encode("utf-8")
 
     result = bcrypt.checkpw(user_password_bytes, db_password_bytes)
     return result
@@ -26,5 +27,6 @@ def compare_password(user_password: bytes, db_password_bytes: bytes) -> bool:
 
 # print(compare_password("abc123", db_password_bytes))
 
-#jwt 
-#oAuth
+# jwt
+# oAuth
+
