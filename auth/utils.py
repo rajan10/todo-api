@@ -33,8 +33,9 @@ def compare_password(user_password: str, db_password: str) -> bool:
 # print(compare_password("abc123", db_password_bytes))
 
 
-def login_required(func):  # func =hello_world()
-    def inner_func(*args, **kwargs): # this is extra function 
+def login_required(func):  # func =hello_world() or decorated function
+    def inner_func(*args, **kwargs):  # this is extra or inner function/wrapper function that modifies/decorates
+        # decorated hello_world function or in short this wrapper modifies the behavior of decorated fun hello_world
         try:
             auth_header = request.headers.get("Authorization")
             encoded_credential = auth_header.split(" ")[1]
@@ -50,7 +51,7 @@ def login_required(func):  # func =hello_world()
                 return make_response(jsonify({"message": "No user"}), 401)
             result = compare_password(user_password=password, db_password=user.password)
             if result:
-                return func(*args, **kwargs) # call hello_world which is inner function
+                return func(*args, **kwargs)  # call hello_world which is  function
             else:
                 response = make_response(
                     jsonify({"message": "Not Successfully authenticated!"})
