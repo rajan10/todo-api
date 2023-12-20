@@ -2,8 +2,9 @@ import bcrypt
 from flask import jsonify, request, make_response
 import base64
 from user.user_repo import UserRepo
-
+from functools import wraps
 from pydantic import ValidationError
+import jwt
 
 
 def encrypt_string(string: str):
@@ -34,7 +35,10 @@ def compare_password(user_password: str, db_password: str) -> bool:
 
 
 def login_required(func):  # func =hello_world() or decorated function
-    def inner_func(*args, **kwargs):  # this is extra or inner function/wrapper function that modifies/decorates
+    @wraps(func)
+    def inner_func(
+        *args, **kwargs
+    ):  # this is extra or inner function/wrapper function that modifies/decorates
         # decorated hello_world function or in short this wrapper modifies the behavior of decorated fun hello_world
         try:
             auth_header = request.headers.get("Authorization")
@@ -63,3 +67,8 @@ def login_required(func):  # func =hello_world() or decorated function
             return make_response(jsonify({"message": str(exc)}), 500)
 
     return inner_func
+
+
+def create_access_token(payload: dict) -> str:
+    access_token = jwt.encode(payload, "9898", algorithm="HS256")
+    return access_token

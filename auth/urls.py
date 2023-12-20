@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, make_response
 from user.user_repo import UserRepo
 from pydantic import ValidationError
 
-from auth.utils import compare_password, login_required
+from auth.utils import compare_password, login_required, create_access_token
 import base64
 
 
@@ -42,7 +42,21 @@ def user_auth():
 
 
 @auth_blueprint.route("/hello-world", methods=["GET"])
-@login_required
-def hello_world():
-    print("Executing business logic")
+@login_required  # decorator
+def hello_world():  # decorated function
     return make_response(jsonify({"message": "Hello world!"}), 200)
+
+
+@auth_blueprint.route("/login", methods=["POST"])
+@login_required
+def login():
+    access_token = create_access_token(payload={"name": "Hari"})
+    return make_response(
+        jsonify(
+            {"message": "Successfully Authenticated", "access_token": access_token}
+        ),
+        200,
+    )
+
+
+# get_all_user end point
