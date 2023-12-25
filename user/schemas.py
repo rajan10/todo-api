@@ -4,8 +4,8 @@ from fields import PyObjectId
 
 # User schemea
 class UserBaseSchema(BaseModel):
-    username: str = Field(..., min_length=4, description="username of the User")
-    password: str = Field(..., min_length=4, description="password of the User")
+    username: str = Field(..., min_length=3, description="username of the User")
+    password: str = Field(..., min_length=3, description="password of the User")
 
 
 class UserCreateSchema(UserBaseSchema):

@@ -47,16 +47,19 @@ def hello_world():  # decorated function
     return make_response(jsonify({"message": "Hello world!"}), 200)
 
 
-@auth_blueprint.route("/login", methods=["POST"])
-@login_required
-def login():
-    access_token = create_access_token(payload={"name": "Hari"})
-    return make_response(
-        jsonify(
+@auth_blueprint.route(
+    "/login", methods=["POST"]
+)  # Flask route decorator that specifies '/login' endpoint under
+# a Flask blueprint that should handle HTTP POST requests
+@login_required  # a custom decorator that ensures user is authenticated before accessing a particular route
+def login():  # where is database check for username and password
+    # When user is authenticated as tallied from db, we create an access token for SUCCESSFUL login of authenticated users
+    access_token = create_access_token(
+        payload={"name": "Hari"}
+    )  # creates a JWT(JSON web token)
+    return make_response(  # make_response() creates a Flask response object
+        jsonify(  # jsonify converts below Python dict into a JSON response. The response includes  status code 200
             {"message": "Successfully Authenticated", "access_token": access_token}
         ),
         200,
     )
-
-
-# get_all_user end point

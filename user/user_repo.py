@@ -12,6 +12,12 @@ class UserRepo:
         if user:
             return user
 
+    def read_all(self) -> list[str]:
+        users = User.objects()
+        if users:
+            return users
+        return []
+
     def update_by_username(self, username: str, password: str) -> User:
         user = self.read_by_username(username=username)
         if user:
